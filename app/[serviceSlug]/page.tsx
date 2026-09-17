@@ -21,6 +21,7 @@ import { Contacts } from '@/components/Contacts';
 import { Footer } from '@/components/Footer';
 import { LeadModal } from '@/components/LeadModal';
 import { FloatingButtons } from '@/components/FloatingButtons';
+import { SeoBlock } from '@/components/SeoBlock';
 
 const pillIcons = [Wrench, CheckCircle2, ShieldCheck, Award];
 
@@ -165,7 +166,7 @@ export default function ServiceDetailPage() {
                     alt={service.title[lang]}
                     width={520}
                     height={520}
-                    className="w-full h-auto object-contain drop-shadow-2xl animate-float max-h-[340px] sm:max-h-none"
+                    className="w-full h-full object-contain drop-shadow-2xl animate-float max-h-[400px] lg:max-h-[500px]"
                     priority
                   />
                 </div>
@@ -194,6 +195,11 @@ export default function ServiceDetailPage() {
         brands={service.brands}
         lang={lang}
       />
+
+      {/* SEO Text Block */}
+      {service.seoText && (
+        <SeoBlock lang={lang} seoText={service.seoText} />
+      )}
 
       {/* Why Us Section */}
       <WhyUs

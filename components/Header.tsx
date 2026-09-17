@@ -103,14 +103,19 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="flex items-center justify-between">
             {/* Logo */}
             <Link href="/" className="relative flex items-center transition-transform active:scale-95">
-              <Image
-                src="/images/logo.png"
-                alt="UZBService Logo"
-                width={150}
-                height={48}
-                className="h-8 sm:h-11 w-auto object-contain"
-                priority
-              />
+              <div className="flex items-center space-x-2">
+                <div className="relative w-8 h-8 sm:w-10 sm:h-10 overflow-hidden shrink-0 flex items-center">
+                  <img
+                    src="/images/logo.png"
+                    alt="Toshkent Service Icon"
+                    className="absolute left-0 h-full w-auto max-w-none"
+                  />
+                </div>
+                <div className="flex flex-col justify-center">
+                  <span className="text-[15px] sm:text-[19px] font-black leading-none tracking-wide text-[#0B1B3D] uppercase">Toshkent</span>
+                  <span className="text-[11px] sm:text-[13px] font-bold leading-tight tracking-[0.1em] text-[#0B1B3D] uppercase">Service</span>
+                </div>
+              </div>
             </Link>
 
             {/* Desktop Navigation */}
@@ -201,13 +206,19 @@ export const Header: React.FC<HeaderProps> = ({
               <div>
                 {/* Header inside drawer */}
                 <div className="flex items-center justify-between pb-4 border-b border-slate-100">
-                  <Image
-                    src="/images/logo.png"
-                    alt="UZBService Logo"
-                    width={130}
-                    height={42}
-                    className="h-8 w-auto object-contain"
-                  />
+                  <div className="flex items-center space-x-2">
+                    <div className="relative w-8 h-8 overflow-hidden shrink-0 flex items-center">
+                      <img
+                        src="/images/logo.png"
+                        alt="Toshkent Service Icon"
+                        className="absolute left-0 h-full w-auto max-w-none"
+                      />
+                    </div>
+                    <div className="flex flex-col justify-center">
+                      <span className="text-[15px] font-black leading-none tracking-wide text-[#0B1B3D] uppercase">Toshkent</span>
+                      <span className="text-[11px] font-bold leading-tight tracking-[0.1em] text-[#0B1B3D] uppercase">Service</span>
+                    </div>
+                  </div>
                   <button
                     type="button"
                     onClick={() => setMobileMenuOpen(false)}

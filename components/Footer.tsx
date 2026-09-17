@@ -37,13 +37,19 @@ export const Footer: React.FC<FooterProps> = ({ lang }) => {
           {/* Col 1: Brand & Desc */}
           <div className="space-y-4">
             <Link href="/" className="inline-block mb-2">
-              <Image
-                src="/images/logo.png"
-                alt="UZBService Logo"
-                width={150}
-                height={48}
-                className="h-10 w-auto object-contain brightness-0 invert opacity-95 hover:opacity-100 transition-opacity"
-              />
+              <div className="flex items-center space-x-2 opacity-95 hover:opacity-100 transition-opacity">
+                <div className="relative w-9 h-9 overflow-hidden shrink-0 flex items-center">
+                  <img
+                    src="/images/logo.png"
+                    alt="Toshkent Service Icon"
+                    className="absolute left-0 h-full w-auto max-w-none brightness-0 invert"
+                  />
+                </div>
+                <div className="flex flex-col justify-center text-white">
+                  <span className="text-[17px] font-black leading-none tracking-wide uppercase">Toshkent</span>
+                  <span className="text-[12px] font-bold leading-tight tracking-[0.1em] uppercase">Service</span>
+                </div>
+              </div>
             </Link>
             <p className="text-sm text-slate-300 leading-relaxed max-w-sm">
               {content.serviceCenter}
@@ -112,22 +118,22 @@ export const Footer: React.FC<FooterProps> = ({ lang }) => {
             <ul className="space-y-2.5 text-sm text-slate-300">
               <li>
                 <a href="#uslugi" className="hover:text-[#1390FC] transition-colors">
-                  {lang === 'ru' ? 'Ремонт газовых котлов' : 'Gaz qozonlarini ta\'mirlash'}
+                  {lang === 'ru' ? 'Ремонт настенных котлов' : 'Devorga osiladigan qozonlar ta\'miri'}
                 </a>
               </li>
               <li>
                 <a href="#uslugi" className="hover:text-[#1390FC] transition-colors">
-                  {lang === 'ru' ? 'Ремонт холодильников' : 'Muzlatgichlarni ta\'mirlash'}
+                  {lang === 'ru' ? 'Ремонт напольных котлов' : 'Yerga qo\'yiladigan qozonlar ta\'miri'}
                 </a>
               </li>
               <li>
                 <a href="#uslugi" className="hover:text-[#1390FC] transition-colors">
-                  {lang === 'ru' ? 'Ремонт кондиционеров' : 'Konditsionerlarni ta\'mirlash'}
+                  {lang === 'ru' ? 'Чистка теплообменника' : 'Issiqlik almashtirgichni tozalash'}
                 </a>
               </li>
               <li>
                 <a href="#uslugi" className="hover:text-[#1390FC] transition-colors">
-                  {lang === 'ru' ? 'Ремонт стиральных машин' : 'Kir yuvish mashinalarini ta\'mirlash'}
+                  {lang === 'ru' ? 'Ремонт плат управления' : 'Boshqaruv platalarini ta\'mirlash'}
                 </a>
               </li>
             </ul>
@@ -165,7 +171,7 @@ export const Footer: React.FC<FooterProps> = ({ lang }) => {
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-4">
           <p>{content.copyright}</p>
           <p className="text-slate-400">
-            UZBSERVICE.UZ — Профессиональный сервис бытовой техники
+            TOSHKENTSERVICE.UZ — Профессиональный сервис газовых котлов
           </p>
         </div>
       </div>

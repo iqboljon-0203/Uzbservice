@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     const telegramChatId = process.env.TELEGRAM_CHAT_ID;
 
     const message = `
-🔔 <b>Новая заявка с сайта UZBSERVICE.UZ</b>
+🔔 <b>Новая заявка с сайта TOSHKENTSERVICE.UZ</b>
 
 👤 <b>Имя:</b> ${name || 'Не указано'}
 📞 <b>Телефон:</b> <a href="tel:${phone.replace(/[^\d+]/g, '')}">${phone}</a>

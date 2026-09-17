@@ -108,14 +108,27 @@ export const BreakdownGrid: React.FC<BreakdownGridProps> = ({
                     {item.title[lang]}
                   </h3>
 
-                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-3">
-                    {item.description[lang]}
-                  </p>
-
-                  <div className="p-2.5 rounded-xl bg-blue-50/70 border border-blue-100/80 text-[11px] sm:text-xs text-slate-700">
-                    <span className="font-semibold text-[#1390FC]">{lang === 'ru' ? 'Причина: ' : 'Alomati: '}</span>
-                    {item.symptoms[lang]}
+                  <div className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-3">
+                    {item.description[lang].split('\n').map((line, i) => (
+                      <p key={i} className={line.startsWith('-') ? 'flex items-start gap-2 mb-1.5' : 'mb-2'}>
+                        {line.startsWith('-') ? (
+                          <>
+                            <span className="w-1 h-1 rounded-full bg-slate-400 mt-2 flex-shrink-0" />
+                            <span>{line.substring(1).trim()}</span>
+                          </>
+                        ) : (
+                          line
+                        )}
+                      </p>
+                    ))}
                   </div>
+
+                  {item.symptoms[lang] && (
+                    <div className="p-2.5 rounded-xl bg-blue-50/70 border border-blue-100/80 text-[11px] sm:text-xs text-slate-700">
+                      <span className="font-semibold text-[#1390FC]">{lang === 'ru' ? 'Причина: ' : 'Alomati: '}</span>
+                      {item.symptoms[lang]}
+                    </div>
+                  )}
                 </div>
               </div>
 
