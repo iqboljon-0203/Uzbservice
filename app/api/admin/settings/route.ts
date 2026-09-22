@@ -1,14 +1,10 @@
 import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/lib/supabase';
 
-function checkAdminAuth(req: Request): boolean {
-  const authHeader = req.headers.get('authorization');
-  if (!authHeader) return false;
-  return authHeader.replace('Bearer ', '') === process.env.ADMIN_PASSWORD;
-}
+import { checkAdminAuth } from '@/lib/admin-auth';
 
 export async function GET(req: Request) {
-  if (!checkAdminAuth(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!(await checkAdminAuth(req))) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   const supabase = getServiceSupabase();
   const url = new URL(req.url);
   const section = url.searchParams.get('section');
@@ -22,7 +18,7 @@ export async function GET(req: Request) {
 }
 
 export async function PUT(req: Request) {
-  if (!checkAdminAuth(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!(await checkAdminAuth(req))) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   const body = await req.json();
   const { section, lang, data: settingsData } = body;
   if (!section || !lang) return NextResponse.json({ error: 'section va lang kerak' }, { status: 400 });

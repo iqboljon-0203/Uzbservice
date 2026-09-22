@@ -1,15 +1,33 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Shield, Lock, ArrowRight, AlertCircle, Eye, EyeOff } from 'lucide-react';
+import { Lock, Mail, ArrowRight, AlertCircle, Eye, EyeOff, Check } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 
 export default function AdminLoginPage() {
   const router = useRouter();
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Sahifa yuklanganda saqlangan login va "eslab qolish" holatini tiklash
+  useEffect(() => {
+    const savedRemember = localStorage.getItem('admin_remember_me');
+    const savedEmail = localStorage.getItem('admin_remembered_email');
+
+    if (savedRemember === 'true') {
+      setRememberMe(true);
+      if (savedEmail) {
+        setEmail(savedEmail);
+      }
+    } else if (savedRemember === 'false') {
+      setRememberMe(false);
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,20 +39,66 @@ export default function AdminLoginPage() {
     setLoading(true);
     setError('');
 
+    // Agar foydalanuvchi faqat "admin" deb yozsa yoki bo'sh qoldirsa:
+    let loginEmail = email.trim();
+    if (!loginEmail || loginEmail.toLowerCase() === 'admin') {
+      loginEmail = 'admin@toshkentservice.uz';
+    }
+
     try {
-      const res = await fetch('/api/admin/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password }),
-      });
+      // 1. Supabase Auth orqali to'g'ridan-to'g'ri kirishga urinish
+      let token = '';
+      let userEmail = loginEmail;
+      let loginSuccess = false;
 
-      const data = await res.json();
+      try {
+        const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+          email: loginEmail,
+          password: password.trim(),
+        });
 
-      if (res.ok && data.ok) {
-        localStorage.setItem('admin_token', data.token);
+        if (!authError && authData?.session) {
+          token = authData.session.access_token;
+          userEmail = authData.user?.email || loginEmail;
+          loginSuccess = true;
+        }
+      } catch (clientAuthErr) {
+        console.warn('Direct supabase auth failed, trying backend API:', clientAuthErr);
+      }
+
+      // 2. Agar client-side auth o'tmasa, backend /api/admin/login orqali tekshirish
+      if (!loginSuccess) {
+        const res = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: loginEmail, password: password.trim() }),
+        });
+
+        const data = await res.json();
+        if (res.ok && data.ok) {
+          token = data.token;
+          userEmail = data.user?.email || loginEmail;
+          loginSuccess = true;
+        } else {
+          setError(data.error || 'Login yoki parol noto\'g\'ri');
+        }
+      }
+
+      if (loginSuccess && token) {
+        // Tokenni saqlash
+        localStorage.setItem('admin_token', token);
+        localStorage.setItem('admin_user_email', userEmail);
+
+        // "Meni eslab qolish" mantiqi
+        if (rememberMe) {
+          localStorage.setItem('admin_remember_me', 'true');
+          localStorage.setItem('admin_remembered_email', email.trim() || 'admin@toshkentservice.uz');
+        } else {
+          localStorage.setItem('admin_remember_me', 'false');
+          localStorage.removeItem('admin_remembered_email');
+        }
+
         router.push('/admin');
-      } else {
-        setError(data.error || 'Parol noto\'g\'ri');
       }
     } catch {
       setError('Server bilan ulanishda xatolik yuz berdi');
@@ -69,9 +133,30 @@ export default function AdminLoginPage() {
           )}
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Email / Login */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                Email yoki Login
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-500">
+                  <Mail className="w-5 h-5" />
+                </div>
+                <input
+                  type="text"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="admin@toshkentservice.uz yoki admin"
+                  className="w-full pl-11 pr-4 py-3 bg-[#0f1117] border border-gray-800 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors text-sm"
+                  autoFocus={!email}
+                />
+              </div>
+            </div>
+
+            {/* Password */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-1.5">
                 Admin Parol
               </label>
               <div className="relative">
@@ -83,8 +168,8 @@ export default function AdminLoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Parolni kiriting..."
-                  className="w-full pl-11 pr-12 py-3 bg-[#0f1117] border border-gray-800 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
-                  autoFocus
+                  className="w-full pl-11 pr-12 py-3 bg-[#0f1117] border border-gray-800 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors text-sm"
+                  autoFocus={!!email}
                 />
                 <button
                   type="button"
@@ -96,10 +181,34 @@ export default function AdminLoginPage() {
               </div>
             </div>
 
+            {/* Eslab qolish (Remember me) Checkbox */}
+            <div className="flex items-center justify-between pt-1">
+              <label className="flex items-center space-x-2.5 cursor-pointer select-none group">
+                <div
+                  onClick={() => setRememberMe(!rememberMe)}
+                  className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all ${
+                    rememberMe
+                      ? 'bg-blue-600 border-blue-600 text-white shadow-sm shadow-blue-500/30'
+                      : 'bg-[#0f1117] border-gray-700 group-hover:border-gray-600'
+                  }`}
+                >
+                  {rememberMe && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                </div>
+                <span className="text-xs font-medium text-gray-300 group-hover:text-white transition-colors">
+                  Meni eslab qolish
+                </span>
+              </label>
+
+              <span className="text-[11px] text-gray-500">
+                Supabase Auth 🔒
+              </span>
+            </div>
+
+            {/* Submit Button */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 px-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-medium rounded-xl shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 transition-all duration-200 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full mt-2 py-3.5 px-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-medium rounded-xl shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 transition-all duration-200 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -114,7 +223,7 @@ export default function AdminLoginPage() {
 
           <div className="mt-8 text-center border-t border-gray-800/60 pt-4">
             <p className="text-xs text-gray-500">
-              Uzb Service Management System &copy; {new Date().getFullYear()}
+              Toshkent Service Management System &copy; {new Date().getFullYear()}
             </p>
           </div>
         </div>

@@ -8,6 +8,8 @@ import {
   Menu, X, ChevronRight, Shield, Sparkles
 } from 'lucide-react';
 
+import { supabase } from '@/lib/supabase';
+
 const navItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/leads', label: 'Buyurtmalar (CRM)', icon: FileText },
@@ -23,20 +25,69 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userEmail, setUserEmail] = useState<string>('admin@toshkentservice.uz');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('admin_token');
-    if (token) {
-      setIsAuthenticated(true);
-    } else if (pathname !== '/admin/login') {
-      router.push('/admin/login');
+    async function checkAuth() {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          localStorage.setItem('admin_token', session.access_token);
+          if (session.user?.email) {
+            setUserEmail(session.user.email);
+            localStorage.setItem('admin_user_email', session.user.email);
+          }
+          setIsAuthenticated(true);
+          setLoading(false);
+          return;
+        }
+      } catch {
+        // fallback
+      }
+
+      const token = localStorage.getItem('admin_token');
+      const savedEmail = localStorage.getItem('admin_user_email');
+      if (token) {
+        setIsAuthenticated(true);
+        if (savedEmail) setUserEmail(savedEmail);
+      } else if (pathname !== '/admin/login') {
+        router.push('/admin/login');
+      }
+      setLoading(false);
     }
-    setLoading(false);
+
+    checkAuth();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session) {
+        localStorage.setItem('admin_token', session.access_token);
+        if (session.user?.email) setUserEmail(session.user.email);
+        setIsAuthenticated(true);
+      } else if (event === 'SIGNED_OUT') {
+        setIsAuthenticated(false);
+        if (pathname !== '/admin/login') {
+          router.push('/admin/login');
+        }
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [pathname, router]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+    } catch {
+      // ignore
+    }
     localStorage.removeItem('admin_token');
+    localStorage.removeItem('admin_user_email');
+    if (localStorage.getItem('admin_remember_me') !== 'true') {
+      localStorage.removeItem('admin_remembered_email');
+    }
     router.push('/admin/login');
   };
 
@@ -107,13 +158,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           })}
         </nav>
 
-        {/* Logout */}
-        <div className="p-3 border-t border-gray-800/50">
+        {/* User Info & Logout */}
+        <div className="p-3 border-t border-gray-800/50 space-y-2">
+          <div className="px-3 py-1.5 rounded-lg bg-gray-800/40 border border-gray-800/60 flex items-center justify-between">
+            <div className="min-w-0">
+              <p className="text-[10px] text-gray-500 font-semibold uppercase tracking-wider">Admin</p>
+              <p className="text-xs text-gray-300 font-medium truncate">{userEmail}</p>
+            </div>
+            <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" title="Faol sessiya" />
+          </div>
+
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-red-400 hover:bg-red-500/10 w-full transition-colors cursor-pointer"
+            className="flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold text-red-400 hover:bg-red-500/10 w-full transition-colors cursor-pointer"
           >
-            <LogOut className="w-[18px] h-[18px]" />
+            <LogOut className="w-4 h-4" />
             <span>Chiqish</span>
           </button>
         </div>

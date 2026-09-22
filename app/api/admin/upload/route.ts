@@ -3,14 +3,10 @@ import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
 import { getServiceSupabase } from '@/lib/supabase';
 
-function checkAdminAuth(req: Request): boolean {
-  const authHeader = req.headers.get('authorization');
-  if (!authHeader) return false;
-  return authHeader.replace('Bearer ', '') === process.env.ADMIN_PASSWORD;
-}
+import { checkAdminAuth } from '@/lib/admin-auth';
 
 export async function POST(req: Request) {
-  if (!checkAdminAuth(req)) {
+  if (!(await checkAdminAuth(req))) {
     return NextResponse.json({ error: 'Ruxsat berilmagan (Unauthorized)' }, { status: 401 });
   }
 

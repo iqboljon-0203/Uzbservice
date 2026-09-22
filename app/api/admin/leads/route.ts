@@ -1,17 +1,10 @@
 import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/lib/supabase';
-
-// Admin autentifikatsiya tekshiruvi
-function checkAdminAuth(req: Request): boolean {
-  const authHeader = req.headers.get('authorization');
-  if (!authHeader) return false;
-  const token = authHeader.replace('Bearer ', '');
-  return token === process.env.ADMIN_PASSWORD;
-}
+import { checkAdminAuth } from '@/lib/admin-auth';
 
 // GET — barcha leadlarni olish
 export async function GET(req: Request) {
-  if (!checkAdminAuth(req)) {
+  if (!(await checkAdminAuth(req))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -23,40 +16,51 @@ export async function GET(req: Request) {
   const limit = parseInt(url.searchParams.get('limit') || '50');
   const offset = (page - 1) * limit;
 
-  let query = supabase
-    .from('leads')
-    .select('*', { count: 'exact' })
-    .order('created_at', { ascending: false })
-    .range(offset, offset + limit - 1);
-
-  if (status && status !== 'all') {
-    query = query.eq('status', status);
-  }
-  if (search) {
-    query = query.or(`name.ilike.%${search}%,phone.ilike.%${search}%`);
-  }
-
   try {
-    const { data, error, count } = await query;
-    if (!error && data) {
-      return NextResponse.json({ data, total: count, page, limit });
+    let query = supabase
+      .from('leads')
+      .select('*', { count: 'exact' })
+      .order('created_at', { ascending: false })
+      .range(offset, offset + limit - 1);
+
+    if (status && status !== 'all') {
+      query = query.eq('status', status);
     }
-  } catch (err) {
-    console.warn('Supabase leads query failed, falling back to data/leads.json');
+
+    if (search) {
+      query = query.or(`name.ilike.%${search}%,phone.ilike.%${search}%,service.ilike.%${search}%`);
+    }
+
+    const { data, error, count } = await query;
+
+    if (!error && data) {
+      return NextResponse.json({
+        data,
+        total: count || 0,
+        page,
+        limit,
+      });
+    }
+  } catch {
+    console.warn('Supabase leads query failed, using fallback');
   }
 
-  // Fallback: Read from local data/leads.json
+  // Fallback: local file if database fails
   try {
     const fs = await import('fs');
     const path = await import('path');
-    const leadsFile = path.join(process.cwd(), 'data', 'leads.json');
-    if (fs.existsSync(leadsFile)) {
-      const content = fs.readFileSync(leadsFile, 'utf8');
-      const allLeads = JSON.parse(content);
-      return NextResponse.json({ data: allLeads, total: allLeads.length, page: 1, limit: allLeads.length });
+    const filePath = path.join(process.cwd(), 'data', 'leads.json');
+    if (fs.existsSync(filePath)) {
+      const fileData = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+      return NextResponse.json({
+        data: fileData.slice(offset, offset + limit),
+        total: fileData.length,
+        page,
+        limit,
+      });
     }
-  } catch (fsErr) {
-    console.error('Failed to read fallback leads:', fsErr);
+  } catch {
+    // ignore
   }
 
   return NextResponse.json({ data: [], total: 0, page: 1, limit: 50 });
@@ -64,7 +68,7 @@ export async function GET(req: Request) {
 
 // PATCH — lead statusini o'zgartirish
 export async function PATCH(req: Request) {
-  if (!checkAdminAuth(req)) {
+  if (!(await checkAdminAuth(req))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -90,7 +94,7 @@ export async function PATCH(req: Request) {
 
 // DELETE — leadni o'chirish
 export async function DELETE(req: Request) {
-  if (!checkAdminAuth(req)) {
+  if (!(await checkAdminAuth(req))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

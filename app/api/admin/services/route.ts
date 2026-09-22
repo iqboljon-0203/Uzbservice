@@ -1,20 +1,15 @@
 import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/lib/supabase';
-
-function checkAdminAuth(req: Request): boolean {
-  const authHeader = req.headers.get('authorization');
-  if (!authHeader) return false;
-  return authHeader.replace('Bearer ', '') === process.env.ADMIN_PASSWORD;
-}
+import { checkAdminAuth } from '@/lib/admin-auth';
 
 export async function GET(req: Request) {
-  if (!checkAdminAuth(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!(await checkAdminAuth(req))) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   try {
     const supabase = getServiceSupabase();
     const { data, error } = await supabase.from('services').select('*').order('sort_order');
     if (!error && data && data.length > 0) return NextResponse.json({ data });
-  } catch (err) {
+  } catch {
     console.warn('Supabase services query failed, using static fallback');
   }
 
@@ -24,19 +19,18 @@ export async function GET(req: Request) {
   const uzItems = siteContent.uz.services.items;
 
   const fallback = ruItems.map((ru, idx) => {
-    const uz = uzItems.find(u => u.id === ru.id) || uzItems[idx] || ru;
+    const uz = uzItems.find(u => u.id === ru.id) || uzItems[idx];
     return {
-      id: ru.id,
       service_id: ru.id,
       title_ru: ru.title,
-      title_uz: uz.title,
+      title_uz: uz?.title || ru.title,
       desc_ru: ru.desc,
-      desc_uz: uz.desc,
+      desc_uz: uz?.desc || ru.desc,
       image: ru.image,
       price_note_ru: ru.priceNote,
-      price_note_uz: uz.priceNote,
+      price_note_uz: uz?.priceNote || ru.priceNote,
       badge_ru: ru.badge,
-      badge_uz: uz.badge,
+      badge_uz: uz?.badge || ru.badge,
       sort_order: idx + 1,
     };
   });
@@ -45,7 +39,7 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  if (!checkAdminAuth(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!(await checkAdminAuth(req))) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   const body = await req.json();
   const supabase = getServiceSupabase();
   const { data, error } = await supabase.from('services').insert(body).select().single();
@@ -54,7 +48,7 @@ export async function POST(req: Request) {
 }
 
 export async function PUT(req: Request) {
-  if (!checkAdminAuth(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!(await checkAdminAuth(req))) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   const body = await req.json();
   const { id, service_id, created_at, ...updates } = body;
   if (!id && !service_id) return NextResponse.json({ error: 'id yoki service_id kerak' }, { status: 400 });
@@ -73,7 +67,7 @@ export async function PUT(req: Request) {
 }
 
 export async function DELETE(req: Request) {
-  if (!checkAdminAuth(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!(await checkAdminAuth(req))) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   const url = new URL(req.url);
   const id = url.searchParams.get('id');
   const service_id = url.searchParams.get('service_id');
