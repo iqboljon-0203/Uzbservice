@@ -10,12 +10,13 @@ import { FloatingShapes } from '@/components/FloatingShapes';
 interface HeroProps {
   lang: Language;
   onOpenModal: () => void;
+  content?: any;
 }
 
 const pillIcons = [Wrench, CheckCircle2, ShieldCheck, Award];
 
-export const Hero: React.FC<HeroProps> = ({ lang, onOpenModal }) => {
-  const content = siteContent[lang].hero;
+export const Hero: React.FC<HeroProps> = ({ lang, onOpenModal, content: propContent }) => {
+  const content = propContent || siteContent[lang].hero;
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -59,7 +60,7 @@ export const Hero: React.FC<HeroProps> = ({ lang, onOpenModal }) => {
             <motion.div variants={itemVariants} className="inline-flex items-center self-start mb-3 sm:mb-4">
               <span className="inline-flex items-center px-3 py-1 rounded-full text-[11px] sm:text-xs font-bold tracking-wide bg-blue-50 text-[#1390FC] border border-blue-200/60 shadow-2xs">
                 <span className="w-2 h-2 rounded-full bg-[#1390FC] animate-pulse mr-2" />
-                UZBSERVICE — Сервисный центр №1
+                {content.badge || (lang === 'ru' ? 'TOSHKENT SERVICE — Сервисный центр №1' : 'TOSHKENT SERVICE — №1 Servis markazi')}
               </span>
             </motion.div>
 
@@ -81,7 +82,7 @@ export const Hero: React.FC<HeroProps> = ({ lang, onOpenModal }) => {
             {/* 4 Feature Badges / Pills */}
             <motion.div variants={itemVariants} className="mb-6 sm:mb-8">
               <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-4">
-                {content.pills.map((pill, idx) => {
+                {(content.pills || []).map((pill: any, idx: number) => {
                   const Icon = pillIcons[idx % pillIcons.length];
                   return (
                     <motion.li
@@ -123,10 +124,10 @@ export const Hero: React.FC<HeroProps> = ({ lang, onOpenModal }) => {
               </button>
 
               <a
-                href="tel:+998991231373"
+                href="tel:+998958484040"
                 className="inline-flex items-center justify-center space-x-2.5 px-6 py-3.5 sm:py-4 rounded-xl border-2 border-slate-300 hover:border-[#1390FC] text-[#1A1A1A] hover:text-[#1390FC] font-semibold text-base transition-all bg-white shadow-xs"
               >
-                <span>+998 99 123 13 73</span>
+                <span>+998 95 848 40 40</span>
               </a>
             </motion.div>
           </motion.div>
@@ -175,7 +176,7 @@ export const Hero: React.FC<HeroProps> = ({ lang, onOpenModal }) => {
               {/* Hero Image */}
               <div className="relative w-full h-full flex items-center justify-center p-4">
                 <Image
-                  src="/images/hero-img.png"
+                  src={(content?.image && typeof content.image === 'string' && content.image.trim().length > 3) ? content.image : "/images/hero-img.png"}
                   alt="Ремонт бытовой техники в Ташкенте"
                   width={520}
                   height={520}

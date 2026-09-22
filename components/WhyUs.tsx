@@ -9,10 +9,11 @@ import { Language, siteContent } from '@/data/content';
 interface WhyUsProps {
   lang: Language;
   onOpenModal: () => void;
+  aboutContent?: any;
 }
 
-export const WhyUs: React.FC<WhyUsProps> = ({ lang, onOpenModal }) => {
-  const content = siteContent[lang].about;
+export const WhyUs: React.FC<WhyUsProps> = ({ lang, onOpenModal, aboutContent }) => {
+  const content = aboutContent || siteContent[lang].about;
 
   return (
     <section id="o_nas" className="py-14 sm:py-20 lg:py-28 bg-white relative overflow-hidden">
@@ -51,8 +52,8 @@ export const WhyUs: React.FC<WhyUsProps> = ({ lang, onOpenModal }) => {
                 className="relative h-48 sm:h-72 rounded-2xl overflow-hidden shadow-md border border-slate-100 group"
               >
                 <Image
-                  src="/images/about-1.png"
-                  alt="Мастер по ремонту UZBService"
+                  src={content.image1 || "/images/about-1.png"}
+                  alt="Мастер по ремонту TOSHKENT SERVICE"
                   fill
                   sizes="(max-width: 768px) 50vw, 33vw"
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
@@ -67,15 +68,15 @@ export const WhyUs: React.FC<WhyUsProps> = ({ lang, onOpenModal }) => {
                 className="relative h-56 sm:h-80 rounded-2xl overflow-hidden shadow-lg border border-slate-100 group translate-y-2 sm:translate-y-4"
               >
                 <Image
-                  src="/images/about-2.png"
-                  alt="Инструменты и запчасти UZBService"
+                  src={content.image2 || "/images/about-2.png"}
+                  alt="Инструменты и запчасти TOSHKENT SERVICE"
                   fill
                   sizes="(max-width: 768px) 50vw, 33vw"
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end p-3 sm:p-4">
                   <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider bg-[#FFC107] px-2.5 py-1 rounded-md text-slate-900 shadow-xs">
-                    100% Результат
+                    {lang === 'ru' ? '100% Результат' : '100% Natija'}
                   </span>
                 </div>
               </motion.div>
@@ -118,7 +119,7 @@ export const WhyUs: React.FC<WhyUsProps> = ({ lang, onOpenModal }) => {
 
             {/* Service Feature List */}
             <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
-              {content.features.map((feature, idx) => (
+              {(content.features || []).map((feature: any, idx: number) => (
                 <motion.div
                   key={idx}
                   initial={{ opacity: 0, x: 15 }}
@@ -159,10 +160,10 @@ export const WhyUs: React.FC<WhyUsProps> = ({ lang, onOpenModal }) => {
               </button>
 
               <a
-                href="tel:+998991231373"
+                href="tel:+998958484040"
                 className="text-sm font-semibold text-[#1390FC] hover:text-blue-700 underline underline-offset-4 text-center sm:text-left py-2"
               >
-                +998 99 123 13 73
+                +998 95 848 40 40
               </a>
             </motion.div>
           </div>

@@ -3,10 +3,11 @@ import { servicesData } from '@/data/servicesData';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://toshkentservice.uz';
+  const lastUpdated = new Date('2025-02-15T00:00:00.000Z');
 
   const services: MetadataRoute.Sitemap = Object.keys(servicesData).map((slug) => ({
     url: `${baseUrl}/${slug}`,
-    lastModified: new Date(),
+    lastModified: lastUpdated,
     changeFrequency: 'weekly',
     priority: 0.8,
   }));
@@ -14,7 +15,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
       url: baseUrl,
-      lastModified: new Date(),
+      lastModified: lastUpdated,
       changeFrequency: 'daily',
       priority: 1,
     },

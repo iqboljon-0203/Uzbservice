@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { Hero } from '@/components/Hero';
 import { Services } from '@/components/Services';
@@ -12,12 +12,31 @@ import { Contacts } from '@/components/Contacts';
 import { Footer } from '@/components/Footer';
 import { LeadModal } from '@/components/LeadModal';
 import { FloatingButtons } from '@/components/FloatingButtons';
-import { Language } from '@/data/content';
+import { Language, siteContent } from '@/data/content';
 
 export default function Home() {
   const [lang, setLang] = useState<Language>('ru');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<string | undefined>(undefined);
+  const [dynamicContent, setDynamicContent] = useState<any>(siteContent[lang]);
+
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.lang = lang;
+    }
+  }, [lang]);
+
+  useEffect(() => {
+    setDynamicContent(siteContent[lang]);
+    fetch(`/api/content?lang=${lang}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.content) {
+          setDynamicContent(data.content);
+        }
+      })
+      .catch(() => {});
+  }, [lang]);
 
   const handleOpenModal = (serviceName?: string) => {
     setSelectedService(serviceName);
@@ -34,6 +53,8 @@ export default function Home() {
       {/* Header */}
       <Header
         lang={lang}
+        navContent={dynamicContent?.nav}
+        contactsContent={dynamicContent?.contacts}
         onLanguageChange={setLang}
         onOpenModal={handleOpenModal}
       />
@@ -41,6 +62,7 @@ export default function Home() {
       {/* Hero Section */}
       <Hero
         lang={lang}
+        content={dynamicContent?.hero}
         onOpenModal={() => handleOpenModal()}
       />
 
@@ -53,12 +75,14 @@ export default function Home() {
       {/* About & Why Us Section */}
       <WhyUs
         lang={lang}
+        aboutContent={dynamicContent?.about}
         onOpenModal={() => handleOpenModal()}
       />
 
       {/* Facts & Stats Counter Section */}
       <Stats
         lang={lang}
+        content={dynamicContent?.facts}
       />
 
       {/* Reviews Slider Section */}
@@ -69,17 +93,22 @@ export default function Home() {
       {/* Urgency CTA & Inline Form Banner */}
       <UrgencyBanner
         lang={lang}
+        content={dynamicContent?.urgencyBanner}
         onOpenModal={() => handleOpenModal()}
       />
 
       {/* Contacts & Map Section */}
       <Contacts
         lang={lang}
+        content={dynamicContent?.contacts}
       />
 
       {/* Footer */}
       <Footer
         lang={lang}
+        content={dynamicContent?.footer}
+        contactsContent={dynamicContent?.contacts}
+        navContent={dynamicContent?.nav}
       />
 
       {/* Lead Capture Modal */}
@@ -87,12 +116,16 @@ export default function Home() {
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         lang={lang}
+        content={dynamicContent?.modal}
         initialService={selectedService}
       />
 
       {/* Sticky Floating Action Buttons & Mobile Bar */}
       <FloatingButtons
         lang={lang}
+        contactsContent={dynamicContent?.contacts}
+        fabContent={dynamicContent?.fab}
+        navContent={dynamicContent?.nav}
         onOpenModal={() => handleOpenModal()}
       />
     </main>

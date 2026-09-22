@@ -8,6 +8,7 @@ import { Language, siteContent, CounterItem } from '@/data/content';
 
 interface StatsProps {
   lang: Language;
+  content?: any;
 }
 
 function AnimatedCounter({ target, suffix }: { target: number; suffix: string }) {
@@ -48,8 +49,8 @@ function AnimatedCounter({ target, suffix }: { target: number; suffix: string })
   );
 }
 
-export const Stats: React.FC<StatsProps> = ({ lang }) => {
-  const content = siteContent[lang].facts;
+export const Stats: React.FC<StatsProps> = ({ lang, content: propContent }) => {
+  const content = propContent || siteContent[lang].facts;
 
   return (
     <section className="py-14 sm:py-20 lg:py-28 bg-[#132739] text-white relative overflow-hidden">
@@ -106,8 +107,8 @@ export const Stats: React.FC<StatsProps> = ({ lang }) => {
               className="relative w-full max-w-[340px] sm:max-w-[420px] rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-[#193247]"
             >
               <Image
-                src="/images/facts-image.png"
-                alt="Сервисный центр UZBService"
+                src={content.image || "/images/facts-image.png"}
+                alt="Сервисный центр TOSHKENT SERVICE"
                 width={536}
                 height={665}
                 className="w-full h-auto object-contain block"

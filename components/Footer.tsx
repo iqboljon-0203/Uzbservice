@@ -24,11 +24,22 @@ const InstagramIcon = ({ className = 'w-4 h-4' }: { className?: string }) => (
 
 interface FooterProps {
   lang: Language;
+  content?: any;
+  contactsContent?: any;
+  navContent?: any;
 }
 
-export const Footer: React.FC<FooterProps> = ({ lang }) => {
-  const content = siteContent[lang].footer;
-  const nav = siteContent[lang].nav;
+export const Footer: React.FC<FooterProps> = ({
+  lang,
+  content: propContent,
+  contactsContent,
+  navContent,
+}) => {
+  const content = propContent || siteContent[lang].footer;
+  const nav = navContent || siteContent[lang].nav;
+  const phoneNumber = contactsContent?.phoneVal || contactsContent?.phone1 || '+998 95 848 40 40';
+  const phoneRaw = contactsContent?.phone1Raw || phoneNumber.replace(/[^\d+]/g, '') || '+998958484040';
+  const address = contactsContent?.addressVal || (lang === 'ru' ? 'Ташкент, ул. Талимаржан, 15' : 'Toshkent, Talimarjon ko\'chasi, 15');
 
   return (
     <footer className="bg-[#132739] text-white pt-16 pb-12 border-t border-white/10 relative overflow-hidden">
@@ -37,12 +48,12 @@ export const Footer: React.FC<FooterProps> = ({ lang }) => {
           {/* Col 1: Brand & Desc */}
           <div className="space-y-4">
             <Link href="/" className="inline-block mb-2">
-              <div className="flex items-center space-x-2 opacity-95 hover:opacity-100 transition-opacity">
-                <div className="relative w-9 h-9 overflow-hidden shrink-0 flex items-center">
+              <div className="flex items-center space-x-1.5 sm:space-x-2 opacity-95 hover:opacity-100 transition-opacity">
+                <div className="relative w-12 h-12 overflow-hidden shrink-0 flex items-center justify-center">
                   <img
-                    src="/images/logo.png"
+                    src="/images/logo.svg"
                     alt="Toshkent Service Icon"
-                    className="absolute left-0 h-full w-auto max-w-none brightness-0 invert"
+                    className="w-full h-full object-contain"
                   />
                 </div>
                 <div className="flex flex-col justify-center text-white">
@@ -79,7 +90,7 @@ export const Footer: React.FC<FooterProps> = ({ lang }) => {
           {/* Col 2: Navigation Links */}
           <div>
             <h3 className="text-base font-bold text-white mb-4 uppercase tracking-wider text-xs text-[#FFC107]">
-              Навигация
+              {lang === 'ru' ? 'Навигация' : 'Navigatsiya'}
             </h3>
             <ul className="space-y-2.5 text-sm text-slate-300">
               <li>
@@ -117,24 +128,24 @@ export const Footer: React.FC<FooterProps> = ({ lang }) => {
             </h3>
             <ul className="space-y-2.5 text-sm text-slate-300">
               <li>
-                <a href="#uslugi" className="hover:text-[#1390FC] transition-colors">
-                  {lang === 'ru' ? 'Ремонт настенных котлов' : 'Devorga osiladigan qozonlar ta\'miri'}
-                </a>
+                <Link href="/remont-holodilnikov-v-tashkente" className="hover:text-[#1390FC] transition-colors">
+                  {lang === 'ru' ? 'Ремонт холодильников' : 'Xolodilniklarni ta\'mirlash'}
+                </Link>
               </li>
               <li>
-                <a href="#uslugi" className="hover:text-[#1390FC] transition-colors">
-                  {lang === 'ru' ? 'Ремонт напольных котлов' : 'Yerga qo\'yiladigan qozonlar ta\'miri'}
-                </a>
+                <Link href="/remont-kondiczionerov-v-tashkente" className="hover:text-[#1390FC] transition-colors">
+                  {lang === 'ru' ? 'Ремонт кондиционеров' : 'Konditsionerlarni ta\'mirlash'}
+                </Link>
               </li>
               <li>
-                <a href="#uslugi" className="hover:text-[#1390FC] transition-colors">
-                  {lang === 'ru' ? 'Чистка теплообменника' : 'Issiqlik almashtirgichni tozalash'}
-                </a>
+                <Link href="/remont-stiralnyh-mashin-v-tashkente" className="hover:text-[#1390FC] transition-colors">
+                  {lang === 'ru' ? 'Ремонт стиральных машин' : 'Kir yuvish mashinalari ta\'miri'}
+                </Link>
               </li>
               <li>
-                <a href="#uslugi" className="hover:text-[#1390FC] transition-colors">
-                  {lang === 'ru' ? 'Ремонт плат управления' : 'Boshqaruv platalarini ta\'mirlash'}
-                </a>
+                <Link href="/remont-gazovyh-kotlov-v-tashkente" className="hover:text-[#1390FC] transition-colors">
+                  {lang === 'ru' ? 'Ремонт газовых котлов' : 'Gaz qozonlarini ta\'mirlash'}
+                </Link>
               </li>
             </ul>
           </div>
@@ -146,22 +157,18 @@ export const Footer: React.FC<FooterProps> = ({ lang }) => {
             </h3>
             <div className="space-y-3 text-sm text-slate-300">
               <a
-                href="tel:+998991231373"
+                href={`tel:${phoneRaw}`}
                 className="flex items-center space-x-2 text-white hover:text-[#1390FC] font-semibold transition-colors"
               >
                 <Phone className="w-4 h-4 text-[#1390FC]" />
-                <span>+998 99 123 13 73</span>
+                <span>{phoneNumber}</span>
               </a>
               <div className="flex items-start space-x-2 text-slate-300">
                 <MapPin className="w-4 h-4 text-[#FFC107] flex-shrink-0 mt-0.5" />
-                <span className="text-xs">
-                  {lang === 'ru'
-                    ? 'Ташкент, ул. Талимаржан, 15'
-                    : 'Toshkent, Talimarjon ko\'chasi, 15'}
-                </span>
+                <span className="text-xs">{address}</span>
               </div>
               <p className="text-xs text-emerald-400 font-semibold pt-1">
-                ● 24/7 Прием срочных заявок
+                {lang === 'ru' ? '● 24/7 Прием срочных заявок' : '● 24/7 Shoshilinch arizalar qabuli'}
               </p>
             </div>
           </div>
@@ -171,7 +178,9 @@ export const Footer: React.FC<FooterProps> = ({ lang }) => {
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-4">
           <p>{content.copyright}</p>
           <p className="text-slate-400">
-            TOSHKENTSERVICE.UZ — Профессиональный сервис газовых котлов
+            {lang === 'ru'
+              ? 'TOSHKENTSERVICE.UZ — Профессиональный ремонт бытовой техники в Ташкенте'
+              : 'TOSHKENTSERVICE.UZ — Toshkentda maishiy texnikalarni professional ta\'mirlash'}
           </p>
         </div>
       </div>

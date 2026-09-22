@@ -7,10 +7,11 @@ import { Language, siteContent } from '@/data/content';
 
 interface ContactsProps {
   lang: Language;
+  content?: any;
 }
 
-export const Contacts: React.FC<ContactsProps> = ({ lang }) => {
-  const content = siteContent[lang].contacts;
+export const Contacts: React.FC<ContactsProps> = ({ lang, content: propContent }) => {
+  const content = propContent || siteContent[lang].contacts;
 
   return (
     <section id="contacts" className="py-14 sm:py-20 lg:py-28 bg-white relative">
@@ -74,7 +75,7 @@ export const Contacts: React.FC<ContactsProps> = ({ lang }) => {
                   {content.phoneLabel}
                 </h3>
                 <a
-                  href="tel:+998991231373"
+                  href="tel:+998958484040"
                   className="text-base sm:text-lg font-bold text-[#1390FC] hover:underline"
                 >
                   {content.phoneVal}
@@ -120,7 +121,7 @@ export const Contacts: React.FC<ContactsProps> = ({ lang }) => {
               allowFullScreen={false}
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
-              title="UZBService Location Map - Talimarjan 15, Tashkent"
+              title="TOSHKENT SERVICE Location Map - Talimarjan 15, Tashkent"
               className="w-full h-full"
             />
           </motion.div>

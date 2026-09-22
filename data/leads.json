@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1790054003879,
+    "name": "Olmosbek",
+    "phone": "+998 (90) 123-45-67",
+    "service": "Ремонт холодильников",
+    "comment": "ishlamayapti",
+    "lang": "ru",
+    "timestamp": "22.09.2026, 10:13:23",
+    "createdAt": "2026-09-22T05:13:23.879Z"
+  },
+  {
+    "id": 1790053843819,
+    "name": "Iqboljon",
+    "phone": "+998 (95) 848-40-40",
+    "service": "Konditsioner ta'mirlash",
+    "comment": "Sinov xabari",
+    "lang": "uz",
+    "timestamp": "22.09.2026, 10:10:43",
+    "createdAt": "2026-09-22T05:10:43.819Z"
+  },
+  {
+    "id": 1790053612402,
+    "name": "Клиент с сайта",
+    "phone": "+998 (50) 772-31-08",
+    "service": "Ремонт кондиционеров",
+    "comment": "ishlamayapti",
+    "lang": "ru",
+    "timestamp": "22.09.2026, 10:06:52",
+    "createdAt": "2026-09-22T05:06:52.402Z"
+  }
+]

@@ -28,13 +28,45 @@ const pillIcons = [Wrench, CheckCircle2, ShieldCheck, Award];
 export default function ServiceDetailPage() {
   const params = useParams();
   const slug = params?.serviceSlug as string;
-  const service = servicesData[slug];
+  const initialService = servicesData[slug];
 
+  const [service, setService] = useState<any>(initialService);
   const [lang, setLang] = useState<Language>('ru');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalService, setModalService] = useState<string | undefined>(undefined);
+  const [dynamicContent, setDynamicContent] = useState<any>(siteContent[lang]);
 
-  if (!service) {
+  React.useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.lang = lang;
+    }
+  }, [lang]);
+
+  React.useEffect(() => {
+    setDynamicContent(siteContent[lang]);
+    fetch(`/api/content?lang=${lang}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.content) setDynamicContent(data.content);
+      })
+      .catch(() => {});
+  }, [lang]);
+
+  React.useEffect(() => {
+    if (slug) {
+      if (servicesData[slug]) setService(servicesData[slug]);
+      fetch(`/api/content?type=detail&slug=${slug}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.detail) {
+            setService(data.detail);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [slug]);
+
+  if (!service && !initialService) {
     notFound();
   }
 
@@ -48,7 +80,7 @@ export default function ServiceDetailPage() {
     setModalService(undefined);
   };
 
-  const content = siteContent[lang];
+  const content = dynamicContent || siteContent[lang];
 
   return (
     <main className="min-h-screen flex flex-col bg-white pb-16 sm:pb-0">
@@ -58,6 +90,8 @@ export default function ServiceDetailPage() {
       {/* Header */}
       <Header
         lang={lang}
+        navContent={dynamicContent?.nav}
+        contactsContent={dynamicContent?.contacts}
         onLanguageChange={setLang}
         onOpenModal={handleOpenModal}
       />
@@ -95,7 +129,7 @@ export default function ServiceDetailPage() {
               {/* 4 Feature Badges */}
               <div className="mb-6 sm:mb-8">
                 <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-4">
-                  {content.hero.pills.map((pill, idx) => {
+                  {(content.hero.pills || []).map((pill: any, idx: number) => {
                     const Icon = pillIcons[idx % pillIcons.length];
                     return (
                       <li
@@ -132,10 +166,10 @@ export default function ServiceDetailPage() {
                 </button>
 
                 <a
-                  href="tel:+998991231373"
+                  href="tel:+998958484040"
                   className="inline-flex items-center justify-center space-x-2.5 px-6 py-3.5 sm:py-4 rounded-xl border-2 border-slate-300 hover:border-[#1390FC] text-[#1A1A1A] hover:text-[#1390FC] font-semibold text-base transition-all bg-white shadow-xs"
                 >
-                  <span>+998 99 123 13 73</span>
+                  <span>+998 95 848 40 40</span>
                 </a>
               </div>
             </div>
@@ -204,12 +238,14 @@ export default function ServiceDetailPage() {
       {/* Why Us Section */}
       <WhyUs
         lang={lang}
+        aboutContent={dynamicContent?.about}
         onOpenModal={() => handleOpenModal()}
       />
 
       {/* Animated Stats / Counters */}
       <Stats
         lang={lang}
+        content={dynamicContent?.facts}
       />
 
       {/* Reviews Carousel */}
@@ -220,17 +256,22 @@ export default function ServiceDetailPage() {
       {/* Urgency CTA Banner */}
       <UrgencyBanner
         lang={lang}
+        content={dynamicContent?.urgencyBanner}
         onOpenModal={() => handleOpenModal()}
       />
 
       {/* Contacts & Map */}
       <Contacts
         lang={lang}
+        content={dynamicContent?.contacts}
       />
 
       {/* Footer */}
       <Footer
         lang={lang}
+        content={dynamicContent?.footer}
+        contactsContent={dynamicContent?.contacts}
+        navContent={dynamicContent?.nav}
       />
 
       {/* Lead Modal */}
@@ -238,12 +279,16 @@ export default function ServiceDetailPage() {
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         lang={lang}
+        content={dynamicContent?.modal}
         initialService={modalService}
       />
 
       {/* Sticky Action Buttons */}
       <FloatingButtons
         lang={lang}
+        contactsContent={dynamicContent?.contacts}
+        fabContent={dynamicContent?.fab}
+        navContent={dynamicContent?.nav}
         onOpenModal={() => handleOpenModal()}
       />
     </main>

@@ -10,10 +10,11 @@ import confetti from 'canvas-confetti';
 interface UrgencyBannerProps {
   lang: Language;
   onOpenModal: () => void;
+  content?: any;
 }
 
-export const UrgencyBanner: React.FC<UrgencyBannerProps> = ({ lang, onOpenModal }) => {
-  const content = siteContent[lang].urgencyBanner;
+export const UrgencyBanner: React.FC<UrgencyBannerProps> = ({ lang, onOpenModal, content: propContent }) => {
+  const content = propContent || siteContent[lang].urgencyBanner;
   const modalContent = siteContent[lang].modal;
 
   const [name, setName] = useState('');
@@ -23,17 +24,49 @@ export const UrgencyBanner: React.FC<UrgencyBannerProps> = ({ lang, onOpenModal 
   const [submitted, setSubmitted] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let val = e.target.value;
-    if (!val.startsWith('+998')) {
-      val = '+998 ';
+  const [honeypot, setHoneypot] = useState('');
+
+  const formatUzPhone = (value: string): string => {
+    let digits = value.replace(/\D/g, '');
+    if (digits.startsWith('998')) {
+      digits = digits.substring(3);
     }
-    setPhone(val);
+    digits = digits.substring(0, 9);
+    
+    let formatted = '+998';
+    if (digits.length > 0) {
+      formatted += ' (' + digits.substring(0, 2);
+    }
+    if (digits.length >= 2) {
+      formatted += ') ';
+    }
+    if (digits.length > 2) {
+      formatted += digits.substring(2, 5);
+    }
+    if (digits.length >= 5) {
+      formatted += '-';
+    }
+    if (digits.length > 5) {
+      formatted += digits.substring(5, 7);
+    }
+    if (digits.length >= 7) {
+      formatted += '-';
+    }
+    if (digits.length > 7) {
+      formatted += digits.substring(7, 9);
+    }
+    return formatted;
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatUzPhone(e.target.value);
+    setPhone(formatted);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (phone.replace(/[^\d]/g, '').length < 12) {
+    const digitsOnly = phone.replace(/[^\d]/g, '');
+    if (digitsOnly.length < 12) {
       setErrorMessage(
         lang === 'ru'
           ? 'Пожалуйста, укажите полный номер телефона (+998 ...)'
@@ -50,10 +83,11 @@ export const UrgencyBanner: React.FC<UrgencyBannerProps> = ({ lang, onOpenModal 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: name.trim() || 'Клиент с сайта (CTA форма)',
+          name: name.trim() || (lang === 'ru' ? 'Клиент с сайта (CTA форма)' : 'Saytdan mijoz (CTA forma)'),
           phone: phone.trim(),
           service,
           lang,
+          hp_website: honeypot,
         }),
       });
 
@@ -80,7 +114,7 @@ export const UrgencyBanner: React.FC<UrgencyBannerProps> = ({ lang, onOpenModal 
       {/* Background Graphic with dark overlay */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="/images/cta-box-bg.jpg"
+          src={content.bg_image || "/images/cta-box-bg.jpg"}
           alt="CTA Background"
           fill
           className="object-cover opacity-20"
@@ -132,7 +166,7 @@ export const UrgencyBanner: React.FC<UrgencyBannerProps> = ({ lang, onOpenModal 
 
                 {/* Call Now Box */}
                 <a
-                  href="tel:+998991231373"
+                  href="tel:+998958484040"
                   className="flex items-center space-x-2.5 group text-white hover:text-[#FFC107] transition-colors py-2"
                 >
                   <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-white/10 group-hover:bg-[#FFC107] group-hover:text-slate-900 text-[#FFC107] flex items-center justify-center transition-all shadow-xs">
@@ -141,7 +175,7 @@ export const UrgencyBanner: React.FC<UrgencyBannerProps> = ({ lang, onOpenModal 
                   <div>
                     <span className="block text-[10px] sm:text-xs text-slate-400">{content.callLabel}</span>
                     <span className="block text-sm sm:text-base font-bold tracking-tight">
-                      +998 99 123 13 73
+                      +998 95 848 40 40
                     </span>
                   </div>
                 </a>
@@ -164,6 +198,17 @@ export const UrgencyBanner: React.FC<UrgencyBannerProps> = ({ lang, onOpenModal 
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+                  {/* Honeypot hidden input */}
+                  <input
+                    type="text"
+                    name="hp_website"
+                    value={honeypot}
+                    onChange={(e) => setHoneypot(e.target.value)}
+                    className="hidden"
+                    tabIndex={-1}
+                    autoComplete="off"
+                  />
+
                   <div className="mb-2">
                     <h3 className="text-base sm:text-lg font-bold text-white">{content.formTitle}</h3>
                     <p className="text-xs text-slate-300">{content.formSubtitle}</p>

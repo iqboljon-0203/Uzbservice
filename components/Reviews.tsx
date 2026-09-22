@@ -12,8 +12,20 @@ interface ReviewsProps {
 
 export const Reviews: React.FC<ReviewsProps> = ({ lang }) => {
   const content = siteContent[lang].reviews;
-  const reviews = content.items;
+  const [reviews, setReviews] = useState<ReviewItem[]>(content.items);
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  React.useEffect(() => {
+    setReviews(siteContent[lang].reviews.items);
+    fetch(`/api/content?type=reviews&lang=${lang}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.reviews && Array.isArray(data.reviews) && data.reviews.length > 0) {
+          setReviews(data.reviews);
+        }
+      })
+      .catch(() => {});
+  }, [lang]);
 
   const prevSlide = () => {
     setCurrentIndex((prev) => (prev === 0 ? reviews.length - 1 : prev - 1));

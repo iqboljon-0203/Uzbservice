@@ -57,9 +57,14 @@ export const metadata: Metadata = {
   authors: [{ name: "Toshkent Service" }],
   creator: "Toshkent Service",
   icons: {
-    icon: "/images/favicon.webp",
-    shortcut: "/images/favicon.webp",
-    apple: "/images/favicon.webp",
+    icon: [
+      { url: "/images/favicon.png?v=3", type: "image/png" },
+      { url: "/images/logo.svg?v=3", type: "image/svg+xml" },
+      { url: "/images/favicon.webp?v=3", type: "image/webp" },
+      { url: "/favicon.ico?v=3" }
+    ],
+    shortcut: "/images/favicon.png?v=3",
+    apple: "/images/favicon.png?v=3",
   },
   openGraph: {
     type: "website",
@@ -92,7 +97,7 @@ export default function RootLayout({
     "image": "https://toshkentservice.uz/images/hero-img.png",
     "@id": "https://toshkentservice.uz",
     "url": "https://toshkentservice.uz",
-    "telephone": "+998991231373",
+    "telephone": "+998958484040",
     "address": {
       "@type": "PostalAddress",
       "streetAddress": "Tashkent",

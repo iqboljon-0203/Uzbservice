@@ -21,6 +21,19 @@ const serviceUrlMap: Record<string, string> = {
 
 export const Services: React.FC<ServicesProps> = ({ lang, onSelectService }) => {
   const content = siteContent[lang].services;
+  const [items, setItems] = React.useState<ServiceItem[]>(content.items);
+
+  React.useEffect(() => {
+    setItems(siteContent[lang].services.items);
+    fetch(`/api/content?type=services&lang=${lang}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.services && Array.isArray(data.services) && data.services.length > 0) {
+          setItems(data.services);
+        }
+      })
+      .catch(() => {});
+  }, [lang]);
 
   return (
     <section id="uslugi" className="py-14 sm:py-20 lg:py-28 bg-[#132739] text-white relative overflow-hidden">
@@ -65,7 +78,7 @@ export const Services: React.FC<ServicesProps> = ({ lang, onSelectService }) => 
 
         {/* 4 Primary Service Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6 lg:gap-8">
-          {content.items.map((service: ServiceItem, idx: number) => {
+          {items.map((service: ServiceItem, idx: number) => {
             const pageUrl = serviceUrlMap[service.id] || '#uslugi';
             return (
               <motion.div

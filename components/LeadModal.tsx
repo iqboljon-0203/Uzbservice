@@ -11,6 +11,7 @@ interface LeadModalProps {
   onClose: () => void;
   lang: Language;
   initialService?: string;
+  content?: any;
 }
 
 export const LeadModal: React.FC<LeadModalProps> = ({
@@ -18,8 +19,9 @@ export const LeadModal: React.FC<LeadModalProps> = ({
   onClose,
   lang,
   initialService,
+  content: propContent,
 }) => {
-  const content = siteContent[lang].modal;
+  const content = propContent || siteContent[lang].modal;
 
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('+998 ');
@@ -52,18 +54,50 @@ export const LeadModal: React.FC<LeadModalProps> = ({
     };
   }, [isOpen, onClose]);
 
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let val = e.target.value;
-    if (!val.startsWith('+998')) {
-      val = '+998 ';
+  const [honeypot, setHoneypot] = useState('');
+
+  const formatUzPhone = (value: string): string => {
+    let digits = value.replace(/\D/g, '');
+    if (digits.startsWith('998')) {
+      digits = digits.substring(3);
     }
-    setPhone(val);
+    digits = digits.substring(0, 9);
+    
+    let formatted = '+998';
+    if (digits.length > 0) {
+      formatted += ' (' + digits.substring(0, 2);
+    }
+    if (digits.length >= 2) {
+      formatted += ') ';
+    }
+    if (digits.length > 2) {
+      formatted += digits.substring(2, 5);
+    }
+    if (digits.length >= 5) {
+      formatted += '-';
+    }
+    if (digits.length > 5) {
+      formatted += digits.substring(5, 7);
+    }
+    if (digits.length >= 7) {
+      formatted += '-';
+    }
+    if (digits.length > 7) {
+      formatted += digits.substring(7, 9);
+    }
+    return formatted;
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatUzPhone(e.target.value);
+    setPhone(formatted);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (phone.replace(/[^\d]/g, '').length < 12) {
+    const digitsOnly = phone.replace(/[^\d]/g, '');
+    if (digitsOnly.length < 12) {
       setErrorMessage(
         lang === 'ru'
           ? 'Пожалуйста, укажите полный номер телефона (+998 ...)'
@@ -80,11 +114,12 @@ export const LeadModal: React.FC<LeadModalProps> = ({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: name.trim() || 'Клиент с модального окна',
+          name: name.trim() || (lang === 'ru' ? 'Клиент с сайта' : 'Saytdan mijoz'),
           phone: phone.trim(),
           service: service || content.servicesList[0],
           comment: comment.trim(),
           lang,
+          hp_website: honeypot,
         }),
       });
 
@@ -150,7 +185,7 @@ export const LeadModal: React.FC<LeadModalProps> = ({
               </button>
 
               <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold uppercase tracking-wider bg-[#FFC107] text-slate-900 mb-1.5 sm:mb-2">
-                UZBSERVICE
+                TOSHKENT SERVICE
               </span>
               <h3 className="text-xl sm:text-3xl font-extrabold">{content.title}</h3>
               <p className="text-xs sm:text-sm text-slate-300 mt-0.5 sm:mt-1">{content.subtitle}</p>
@@ -179,6 +214,17 @@ export const LeadModal: React.FC<LeadModalProps> = ({
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-3.5 sm:space-y-4">
+                  {/* Honeypot hidden input */}
+                  <input
+                    type="text"
+                    name="hp_website"
+                    value={honeypot}
+                    onChange={(e) => setHoneypot(e.target.value)}
+                    className="hidden"
+                    tabIndex={-1}
+                    autoComplete="off"
+                  />
+
                   {errorMessage && (
                     <div className="p-2.5 sm:p-3 rounded-xl bg-red-50 border border-red-200 text-xs text-red-600 font-medium">
                       {errorMessage}
@@ -238,7 +284,7 @@ export const LeadModal: React.FC<LeadModalProps> = ({
                         onChange={(e) => setService(e.target.value)}
                         className="w-full pl-10 pr-4 py-2.5 sm:py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-base sm:text-sm focus:bg-white focus:outline-none focus:border-[#1390FC] transition-all cursor-pointer appearance-none"
                       >
-                        {content.servicesList.map((item, idx) => (
+                        {(content.servicesList || []).map((item: any, idx: number) => (
                           <option key={idx} value={item}>
                             {item}
                           </option>
