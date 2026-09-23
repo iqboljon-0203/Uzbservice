@@ -222,7 +222,7 @@ export const siteContent = {
     },
     footer: {
       copyright: 'Copyright © 2025 Все права защищены.',
-      telegram: 'https://t.me/BURON_YG',
+      telegram: 'https://t.me/BURON_01',
       instagram: 'https://www.instagram.com/serveskotlov.uz/',
       phone: '+998770026776',
       serviceCenter: 'Специализированный центр по ремонту в Ташкенте. Быстрый и качественный ремонт газовых котлов, замена подшипника стиральной машины, чистка кондиционеров и замена компрессора холодильника с гарантией.',
@@ -451,7 +451,7 @@ export const siteContent = {
     },
     footer: {
       copyright: 'Copyright © 2025 Barcha huquqlar himoyalangan.',
-      telegram: 'https://t.me/BURON_YG',
+      telegram: 'https://t.me/BURON_01',
       instagram: 'https://www.instagram.com/serveskotlov.uz/',
       phone: '+998770026776',
       serviceCenter: 'Toshkentda maishiy texnika ta\'mirlash bo\'yicha ixtisoslashgan markaz. Gaz qozonlarini yuvish, konditsioner tozalash, xolodilnik remont uyga chaqirish, va kir yuvish mashinalari platalarini kafolat bilan tezkor ta\'mirlaymiz.',

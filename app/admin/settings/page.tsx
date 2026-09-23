@@ -16,7 +16,7 @@ export default function AdminSettingsPage() {
     phone1Raw: '770026776',
     phone2: '+998 77 002 67 76',
     phone2Raw: '770026776',
-    telegramUrl: 'https://t.me/BURON_YG',
+    telegramUrl: 'https://t.me/BURON_01',
     addressUz: 'Toshkent shahri, barcha tumanlarga tezkor chiqish',
     addressRu: 'г. Ташкент, оперативный выезд во все районы',
     workingHoursUz: 'Har kuni 24/7 dam olish kunlarisiz',
@@ -167,7 +167,7 @@ export default function AdminSettingsPage() {
                 required
                 value={settings.telegramUrl}
                 onChange={e => setSettings({ ...settings, telegramUrl: e.target.value })}
-                placeholder="https://t.me/BURON_YG"
+                placeholder="https://t.me/BURON_01"
                 className="w-full px-3.5 py-2 bg-[#0f1117] border border-gray-700 rounded-xl text-sm text-white focus:outline-none focus:border-blue-500"
               />
               <span className="text-[11px] text-gray-500 mt-1 block">Telegram tugmasi bosilganda ochiladigan havola</span>
