@@ -22,6 +22,8 @@ import { Footer } from '@/components/Footer';
 import { LeadModal } from '@/components/LeadModal';
 import { FloatingButtons } from '@/components/FloatingButtons';
 import { SeoBlock } from '@/components/SeoBlock';
+import { DistrictsCoverage } from '@/components/DistrictsCoverage';
+import { FaqSection } from '@/components/FaqSection';
 
 const pillIcons = [Wrench, CheckCircle2, ShieldCheck, Award];
 
@@ -166,10 +168,10 @@ export default function ServiceDetailPage() {
                 </button>
 
                 <a
-                  href="tel:+998958484040"
+                  href="tel:+998770026776"
                   className="inline-flex items-center justify-center space-x-2.5 px-6 py-3.5 sm:py-4 rounded-xl border-2 border-slate-300 hover:border-[#1390FC] text-[#1A1A1A] hover:text-[#1390FC] font-semibold text-base transition-all bg-white shadow-xs"
                 >
-                  <span>+998 95 848 40 40</span>
+                  <span>+998 77 002 67 76</span>
                 </a>
               </div>
             </div>
@@ -235,6 +237,12 @@ export default function ServiceDetailPage() {
         <SeoBlock lang={lang} seoText={service.seoText} />
       )}
 
+      {/* Districts Coverage / Geo Local SEO */}
+      <DistrictsCoverage
+        lang={lang}
+        onOpenModal={() => handleOpenModal()}
+      />
+
       {/* Why Us Section */}
       <WhyUs
         lang={lang}
@@ -251,6 +259,12 @@ export default function ServiceDetailPage() {
       {/* Reviews Carousel */}
       <Reviews
         lang={lang}
+      />
+
+      {/* Frequently Asked Questions */}
+      <FaqSection
+        lang={lang}
+        onOpenModal={() => handleOpenModal()}
       />
 
       {/* Urgency CTA Banner */}

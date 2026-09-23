@@ -12,10 +12,10 @@ export default function AdminSettingsPage() {
   const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   const [settings, setSettings] = useState({
-    phone1: '+998 95 848 40 40',
-    phone1Raw: '958484040',
-    phone2: '+998 95 848 40 40',
-    phone2Raw: '958484040',
+    phone1: '+998 77 002 67 76',
+    phone1Raw: '770026776',
+    phone2: '+998 77 002 67 76',
+    phone2Raw: '770026776',
     telegramUrl: 'https://t.me/BURON_YG',
     addressUz: 'Toshkent shahri, barcha tumanlarga tezkor chiqish',
     addressRu: 'г. Ташкент, оперативный выезд во все районы',
@@ -150,7 +150,7 @@ export default function AdminSettingsPage() {
                   required
                   value={settings.phone1Raw}
                   onChange={e => setSettings({ ...settings, phone1Raw: e.target.value })}
-                  placeholder="958484040"
+                  placeholder="770026776"
                   className="w-full px-3.5 py-2 bg-[#0f1117] border border-gray-700 rounded-xl text-sm text-white focus:outline-none focus:border-blue-500"
                 />
                 <span className="text-[11px] text-gray-500 mt-1 block">tel: havolasida ishlatiladi</span>

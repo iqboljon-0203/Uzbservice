@@ -51,7 +51,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       if (token) {
         setIsAuthenticated(true);
         if (savedEmail) setUserEmail(savedEmail);
-      } else if (pathname !== '/admin/login') {
+      } else if (pathname !== '/admin/login' && pathname !== '/login') {
         router.push('/admin/login');
       }
       setLoading(false);
@@ -66,7 +66,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         setIsAuthenticated(true);
       } else if (event === 'SIGNED_OUT') {
         setIsAuthenticated(false);
-        if (pathname !== '/admin/login') {
+        if (pathname !== '/admin/login' && pathname !== '/login') {
           router.push('/admin/login');
         }
       }
@@ -99,7 +99,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     );
   }
 
-  if (pathname === '/admin/login') {
+  if (pathname === '/admin/login' || pathname === '/login') {
     return <>{children}</>;
   }
 
@@ -189,9 +189,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             {navItems.find(i => i.href === pathname)?.label || 'Admin'}
           </h2>
           <div className="ml-auto flex items-center gap-3">
-            <Link href="/" className="text-xs text-gray-500 hover:text-gray-300 transition-colors">
+            <a href="https://toshkentservice.uz" className="text-xs text-gray-500 hover:text-gray-300 transition-colors">
               ← Saytga qaytish
-            </Link>
+            </a>
           </div>
         </header>
 

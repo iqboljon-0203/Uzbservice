@@ -4,9 +4,11 @@ import React, { useState, useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { Hero } from '@/components/Hero';
 import { Services } from '@/components/Services';
+import { DistrictsCoverage } from '@/components/DistrictsCoverage';
 import { WhyUs } from '@/components/WhyUs';
 import { Stats } from '@/components/Stats';
 import { Reviews } from '@/components/Reviews';
+import { FaqSection } from '@/components/FaqSection';
 import { UrgencyBanner } from '@/components/UrgencyBanner';
 import { Contacts } from '@/components/Contacts';
 import { Footer } from '@/components/Footer';
@@ -72,6 +74,12 @@ export default function Home() {
         onSelectService={(serviceTitle) => handleOpenModal(serviceTitle)}
       />
 
+      {/* Districts Coverage / Geo-targeting Local SEO */}
+      <DistrictsCoverage
+        lang={lang}
+        onOpenModal={() => handleOpenModal()}
+      />
+
       {/* About & Why Us Section */}
       <WhyUs
         lang={lang}
@@ -88,6 +96,12 @@ export default function Home() {
       {/* Reviews Slider Section */}
       <Reviews
         lang={lang}
+      />
+
+      {/* Frequently Asked Questions (FAQ) Section */}
+      <FaqSection
+        lang={lang}
+        onOpenModal={() => handleOpenModal()}
       />
 
       {/* Urgency CTA & Inline Form Banner */}

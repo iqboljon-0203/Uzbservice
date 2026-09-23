@@ -160,10 +160,10 @@ export const WhyUs: React.FC<WhyUsProps> = ({ lang, onOpenModal, aboutContent })
               </button>
 
               <a
-                href="tel:+998958484040"
+                href="tel:+998770026776"
                 className="text-sm font-semibold text-[#1390FC] hover:text-blue-700 underline underline-offset-4 text-center sm:text-left py-2"
               >
-                +998 95 848 40 40
+                +998 77 002 67 76
               </a>
             </motion.div>
           </div>

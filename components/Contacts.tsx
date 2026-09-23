@@ -75,10 +75,10 @@ export const Contacts: React.FC<ContactsProps> = ({ lang, content: propContent }
                   {content.phoneLabel}
                 </h3>
                 <a
-                  href="tel:+998958484040"
+                  href={`tel:${content.phoneVal ? content.phoneVal.replace(/[^\d+]/g, '') : '+998770026776'}`}
                   className="text-base sm:text-lg font-bold text-[#1390FC] hover:underline"
                 >
-                  {content.phoneVal}
+                  {content.phoneVal || '+998 77 002 67 76'}
                 </a>
                 <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5 sm:mt-1">
                   {content.scheduleEmergency}

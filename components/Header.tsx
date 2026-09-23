@@ -105,8 +105,8 @@ export const Header: React.FC<HeaderProps> = ({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const content = siteContent[lang];
   const nav = navContent || content.nav;
-  const phoneNumber = contactsContent?.phoneVal || contactsContent?.phone1 || '+998 95 848 40 40';
-  const phoneRaw = contactsContent?.phone1Raw || phoneNumber.replace(/[^\d+]/g, '') || '+998958484040';
+  const phoneNumber = contactsContent?.phoneVal || contactsContent?.phone1 || '+998 77 002 67 76';
+  const phoneRaw = contactsContent?.phone1Raw || phoneNumber.replace(/[^\d+]/g, '') || '+998770026776';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -296,11 +296,11 @@ export const Header: React.FC<HeaderProps> = ({
 
                 {/* Direct Call Button */}
                 <a
-                  href="tel:+998958484040"
+                  href="tel:+998770026776"
                   className="flex items-center justify-center space-x-2.5 py-3 rounded-xl bg-slate-900 text-white text-sm font-semibold shadow-sm active:scale-98"
                 >
                   <Phone className="w-4 h-4 text-[#FFC107]" />
-                  <span>+998 95 848 40 40</span>
+                  <span>+998 77 002 67 76</span>
                 </a>
 
                 {/* Order Button */}

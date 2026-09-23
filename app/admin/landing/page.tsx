@@ -621,7 +621,7 @@ export default function AdminLandingPage() {
                     type="text"
                     value={contacts.phoneVal || ''}
                     onChange={e => updateSectionField('contacts', 'phoneVal', e.target.value)}
-                    placeholder="+998 95 848 40 40"
+                    placeholder="+998 77 002 67 76"
                     className="w-full px-3.5 py-2.5 bg-[#0f1117] border border-gray-700 rounded-xl text-sm text-white"
                   />
                 </div>

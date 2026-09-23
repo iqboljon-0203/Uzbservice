@@ -84,10 +84,10 @@ export const SymptomChecklist: React.FC<SymptomChecklistProps> = ({
               </button>
 
               <a
-                href="tel:+998958484040"
+                href="tel:+998770026776"
                 className="text-xs font-bold text-[#1390FC] hover:underline"
               >
-                +998 95 848 40 40
+                +998 77 002 67 76
               </a>
             </div>
           </div>

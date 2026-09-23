@@ -124,10 +124,10 @@ export const Hero: React.FC<HeroProps> = ({ lang, onOpenModal, content: propCont
               </button>
 
               <a
-                href="tel:+998958484040"
+                href="tel:+998770026776"
                 className="inline-flex items-center justify-center space-x-2.5 px-6 py-3.5 sm:py-4 rounded-xl border-2 border-slate-300 hover:border-[#1390FC] text-[#1A1A1A] hover:text-[#1390FC] font-semibold text-base transition-all bg-white shadow-xs"
               >
-                <span>+998 95 848 40 40</span>
+                <span>+998 77 002 67 76</span>
               </a>
             </motion.div>
           </motion.div>

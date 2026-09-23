@@ -37,8 +37,8 @@ export const Footer: React.FC<FooterProps> = ({
 }) => {
   const content = propContent || siteContent[lang].footer;
   const nav = navContent || siteContent[lang].nav;
-  const phoneNumber = contactsContent?.phoneVal || contactsContent?.phone1 || '+998 95 848 40 40';
-  const phoneRaw = contactsContent?.phone1Raw || phoneNumber.replace(/[^\d+]/g, '') || '+998958484040';
+  const phoneNumber = contactsContent?.phoneVal || contactsContent?.phone1 || '+998 77 002 67 76';
+  const phoneRaw = contactsContent?.phone1Raw || phoneNumber.replace(/[^\d+]/g, '') || '+998770026776';
   const address = contactsContent?.addressVal || (lang === 'ru' ? 'Ташкент, ул. Талимаржан, 15' : 'Toshkent, Talimarjon ko\'chasi, 15');
 
   return (

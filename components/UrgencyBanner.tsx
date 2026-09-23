@@ -166,7 +166,7 @@ export const UrgencyBanner: React.FC<UrgencyBannerProps> = ({ lang, onOpenModal,
 
                 {/* Call Now Box */}
                 <a
-                  href="tel:+998958484040"
+                  href="tel:+998770026776"
                   className="flex items-center space-x-2.5 group text-white hover:text-[#FFC107] transition-colors py-2"
                 >
                   <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-white/10 group-hover:bg-[#FFC107] group-hover:text-slate-900 text-[#FFC107] flex items-center justify-center transition-all shadow-xs">
@@ -175,7 +175,7 @@ export const UrgencyBanner: React.FC<UrgencyBannerProps> = ({ lang, onOpenModal,
                   <div>
                     <span className="block text-[10px] sm:text-xs text-slate-400">{content.callLabel}</span>
                     <span className="block text-sm sm:text-base font-bold tracking-tight">
-                      +998 95 848 40 40
+                      +998 77 002 67 76
                     </span>
                   </div>
                 </a>
