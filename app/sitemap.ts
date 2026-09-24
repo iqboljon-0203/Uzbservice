@@ -10,6 +10,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: currentDate,
     changeFrequency: 'weekly',
     priority: 0.9,
+    alternates: {
+      languages: {
+        ru: `${baseUrl}/${slug}?lang=ru`,
+        uz: `${baseUrl}/${slug}?lang=uz`,
+      },
+    },
   }));
 
   return [
@@ -18,6 +24,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: currentDate,
       changeFrequency: 'daily',
       priority: 1.0,
+      alternates: {
+        languages: {
+          ru: `${baseUrl}?lang=ru`,
+          uz: `${baseUrl}?lang=uz`,
+        },
+      },
     },
     ...services,
   ];

@@ -33,9 +33,9 @@ export const WhyUs: React.FC<WhyUsProps> = ({ lang, onOpenModal, aboutContent })
                 <ShieldCheck className="w-6 h-6 sm:w-8 sm:h-8" />
               </div>
               <div>
-                <h3 className="text-base sm:text-xl font-bold text-slate-900 mb-1">
+                <p className="text-base sm:text-xl font-bold text-slate-900 mb-1">
                   {content.experienceBox.title}
-                </h3>
+                </p>
                 <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                   {content.experienceBox.desc}
                 </p>

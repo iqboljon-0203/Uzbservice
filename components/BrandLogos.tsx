@@ -52,6 +52,10 @@ const BrandItem = ({ brand }: { brand: string }) => {
         <img 
           src={faviconUrl} 
           alt={`${brand} icon`} 
+          loading="lazy"
+          decoding="async"
+          width={24}
+          height={24}
           className="w-5 h-5 sm:w-6 sm:h-6 object-contain filter grayscale group-hover:grayscale-0 transition-all opacity-80 group-hover:opacity-100" 
           onError={() => setImgError(true)}
         />

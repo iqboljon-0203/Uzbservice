@@ -6,6 +6,13 @@ type Props = {
   children: React.ReactNode;
 };
 
+// SSG: Pre-render all 4 service routes at build time
+export function generateStaticParams() {
+  return Object.keys(servicesData).map((serviceSlug) => ({
+    serviceSlug,
+  }));
+}
+
 export async function generateMetadata(
   { params }: Props
 ): Promise<Metadata> {
@@ -84,6 +91,10 @@ export async function generateMetadata(
     keywords: currentKeywords,
     alternates: {
       canonical: fullUrl,
+      languages: {
+        'ru-RU': `${fullUrl}?lang=ru`,
+        'uz-UZ': `${fullUrl}?lang=uz`,
+      },
     },
     robots: {
       index: true,
@@ -170,8 +181,45 @@ export default async function ServiceLayout({
       {
         "@type": "ListItem",
         "position": 2,
+        "name": "Услуги",
+        "item": "https://toshkentservice.uz/#uslugi"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
         "name": service.title.ru,
         "item": `https://toshkentservice.uz/${serviceSlug}`
+      }
+    ]
+  } : null;
+
+  const faqSchema = service ? {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": `Сколько стоит ${service.title.ru.toLowerCase()} в Ташкенте?`,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `Диагностика начинается от 80 000 сум, выезд мастера при согласии на ремонт — бесплатный. Базовый ремонт от ${service.priceFrom.ru}.`
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Как быстро мастер выезжает на дом по Ташкенту?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Мастер выезжает во все 12 районов Ташкента в течение 45–60 минут после подтверждения заявки."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Какая гарантия предоставляется на выполненные работы?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "После завершения ремонта мастер выписывает официальный гарантийный талон сроком от 1 месяца до 1 года на выполненные работы и установленные запчасти."
+        }
       }
     ]
   } : null;
@@ -188,6 +236,12 @@ export default async function ServiceLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+        />
+      )}
+      {faqSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
         />
       )}
       {children}

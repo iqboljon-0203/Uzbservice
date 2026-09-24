@@ -12,15 +12,30 @@ import { FaqSection } from '@/components/FaqSection';
 import { UrgencyBanner } from '@/components/UrgencyBanner';
 import { Contacts } from '@/components/Contacts';
 import { Footer } from '@/components/Footer';
-import { LeadModal } from '@/components/LeadModal';
+import dynamic from 'next/dynamic';
 import { FloatingButtons } from '@/components/FloatingButtons';
 import { Language, siteContent } from '@/data/content';
+
+const LeadModal = dynamic(() => import('@/components/LeadModal').then(mod => mod.LeadModal), {
+  ssr: false,
+});
 
 export default function Home() {
   const [lang, setLang] = useState<Language>('ru');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<string | undefined>(undefined);
   const [dynamicContent, setDynamicContent] = useState<any>(siteContent[lang]);
+
+  // URL parametri (?lang=uz yoki ?lang=ru) orqali tilni aniqlash
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const urlLang = params.get('lang');
+      if (urlLang === 'uz' || urlLang === 'ru') {
+        setLang(urlLang);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (typeof document !== 'undefined') {
@@ -40,6 +55,16 @@ export default function Home() {
       .catch(() => {});
   }, [lang]);
 
+  const handleLanguageChange = (newLang: Language) => {
+    setLang(newLang);
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      url.searchParams.set('lang', newLang);
+      window.history.replaceState({}, '', url.toString());
+      document.documentElement.lang = newLang;
+    }
+  };
+
   const handleOpenModal = (serviceName?: string) => {
     setSelectedService(serviceName);
     setIsModalOpen(true);
@@ -57,7 +82,7 @@ export default function Home() {
         lang={lang}
         navContent={dynamicContent?.nav}
         contactsContent={dynamicContent?.contacts}
-        onLanguageChange={setLang}
+        onLanguageChange={handleLanguageChange}
         onOpenModal={handleOpenModal}
       />
 

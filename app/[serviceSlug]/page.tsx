@@ -7,8 +7,8 @@ import { motion } from 'framer-motion';
 import { Clock, ArrowRight, Wrench, CheckCircle2, ShieldCheck, Award } from 'lucide-react';
 import { servicesData } from '@/data/servicesData';
 import { Language, siteContent } from '@/data/content';
+import dynamic from 'next/dynamic';
 import { Header } from '@/components/Header';
-import { Preloader } from '@/components/Preloader';
 import { FloatingShapes } from '@/components/FloatingShapes';
 import { BreakdownGrid } from '@/components/BreakdownGrid';
 import { SymptomChecklist } from '@/components/SymptomChecklist';
@@ -19,11 +19,14 @@ import { Reviews } from '@/components/Reviews';
 import { UrgencyBanner } from '@/components/UrgencyBanner';
 import { Contacts } from '@/components/Contacts';
 import { Footer } from '@/components/Footer';
-import { LeadModal } from '@/components/LeadModal';
 import { FloatingButtons } from '@/components/FloatingButtons';
 import { SeoBlock } from '@/components/SeoBlock';
 import { DistrictsCoverage } from '@/components/DistrictsCoverage';
 import { FaqSection } from '@/components/FaqSection';
+
+const LeadModal = dynamic(() => import('@/components/LeadModal').then(mod => mod.LeadModal), {
+  ssr: false,
+});
 
 const pillIcons = [Wrench, CheckCircle2, ShieldCheck, Award];
 
@@ -37,6 +40,17 @@ export default function ServiceDetailPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalService, setModalService] = useState<string | undefined>(undefined);
   const [dynamicContent, setDynamicContent] = useState<any>(siteContent[lang]);
+
+  // URL parametri (?lang=uz yoki ?lang=ru) orqali tilni aniqlash
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const urlLang = params.get('lang');
+      if (urlLang === 'uz' || urlLang === 'ru') {
+        setLang(urlLang);
+      }
+    }
+  }, []);
 
   React.useEffect(() => {
     if (typeof document !== 'undefined') {
@@ -72,6 +86,16 @@ export default function ServiceDetailPage() {
     notFound();
   }
 
+  const handleLanguageChange = (newLang: Language) => {
+    setLang(newLang);
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      url.searchParams.set('lang', newLang);
+      window.history.replaceState({}, '', url.toString());
+      document.documentElement.lang = newLang;
+    }
+  };
+
   const handleOpenModal = (serviceName?: string) => {
     setModalService(serviceName || service.title[lang]);
     setIsModalOpen(true);
@@ -86,15 +110,12 @@ export default function ServiceDetailPage() {
 
   return (
     <main className="min-h-screen flex flex-col bg-white pb-16 sm:pb-0">
-      {/* Route Preloader with Spinning Power Icon */}
-      <Preloader />
-
       {/* Header */}
       <Header
         lang={lang}
         navContent={dynamicContent?.nav}
         contactsContent={dynamicContent?.contacts}
-        onLanguageChange={setLang}
+        onLanguageChange={handleLanguageChange}
         onOpenModal={handleOpenModal}
       />
 
